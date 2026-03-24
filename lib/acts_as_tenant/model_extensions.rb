@@ -29,6 +29,10 @@ module ActsAsTenant
               keys.push(*ActsAsTenant.current_tenant.send(options[:additional_pkeys_method]))
             end
 
+            if options[:restrict_to_pkeys_method] && (restrict_to_pkeys = ActsAsTenant.current_tenant.send(options[:restrict_to_pkeys_method]).presence)
+              keys = restrict_to_pkeys
+            end
+
             if options[:through]
               query_criteria = { options[:through] => { fkey.to_sym => keys } }
               query_criteria[polymorphic_type.to_sym] = ActsAsTenant.current_tenant.class.to_s if options[:polymorphic]
